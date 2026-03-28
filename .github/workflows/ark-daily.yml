@@ -2,7 +2,7 @@ name: ARK Daily Sync
 
 on:
   schedule:
-    - cron: "30 23 * * *"
+    - cron: "0 9 * * *"
   workflow_dispatch:
 
 permissions:
