@@ -2,7 +2,19 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from save import find_latest_date_prefix, resolve_scan_date_prefix
+from save import (
+    find_latest_date_prefix,
+    resolve_scan_date_prefix,
+    should_skip_scan,
+)
+
+
+class FakeDatabase:
+    def __init__(self, existing_dates=None):
+        self.existing_dates = set(existing_dates or [])
+
+    def has_records_for_date(self, date_str):
+        return date_str in self.existing_dates
 
 
 class SaveDateSelectionTests(unittest.TestCase):
@@ -43,6 +55,21 @@ class SaveDateSelectionTests(unittest.TestCase):
             (root / "ARKK" / "2026-03-27_ARKK.csv").write_text("header\n", encoding="utf-8")
 
             self.assertIsNone(resolve_scan_date_prefix(root, date_prefix=None, scan_all=True))
+
+    def test_should_skip_scan_when_latest_date_already_exists(self):
+        database = FakeDatabase(existing_dates={"2026-03-27"})
+
+        self.assertTrue(should_skip_scan(database, "2026-03-27", scan_all=False))
+
+    def test_should_not_skip_scan_when_latest_date_missing(self):
+        database = FakeDatabase(existing_dates=set())
+
+        self.assertFalse(should_skip_scan(database, "2026-03-27", scan_all=False))
+
+    def test_should_not_skip_scan_for_full_backfill(self):
+        database = FakeDatabase(existing_dates={"2026-03-27"})
+
+        self.assertFalse(should_skip_scan(database, "2026-03-27", scan_all=True))
 
 
 if __name__ == "__main__":

@@ -19,6 +19,9 @@ class BaseDatabase(ABC):
     @abstractmethod
     def save_records(self, records): pass
 
+    @abstractmethod
+    def has_records_for_date(self, date_str): pass
+
 class SQLiteDatabase(BaseDatabase):
     def __init__(self, db_path="db/ark_data.db"):
         self.db_path = db_path
@@ -85,6 +88,14 @@ class SQLiteDatabase(BaseDatabase):
             cursor.executemany(query, data_to_save)
             conn.commit()
             print(f" -> 执行完毕。影响行数: {cursor.rowcount} (包含新增和替换)")
+
+    def has_records_for_date(self, date_str):
+        with self._get_connection() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM holdings WHERE date = ? LIMIT 1",
+                (date_str,),
+            ).fetchone()
+        return row is not None
 
 # ==========================================
 # 2. 数据解析层 (ETL Logic)
@@ -194,6 +205,13 @@ def resolve_scan_date_prefix(root_dir, date_prefix=None, scan_all=False):
     return find_latest_date_prefix(root_dir)
 
 
+def should_skip_scan(database, date_prefix, scan_all=False):
+    """每日任务在目标日期已存在数据时直接跳过，避免重复改写 SQLite。"""
+    if scan_all or not date_prefix:
+        return False
+    return database.has_records_for_date(date_prefix)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="将 ARK CSV 数据写入 SQLite 数据库")
     parser.add_argument(
@@ -236,6 +254,10 @@ def main():
         print(f"执行增量扫描写入，目标日期: {target_date}")
     else:
         print("未找到可处理的 CSV 文件，跳过写入。")
+        return
+
+    if should_skip_scan(database, target_date, scan_all=args.all):
+        print(f"{target_date} 的数据已存在于数据库，跳过本次写入。")
         return
 
     processor.scan_and_run(target_date)
