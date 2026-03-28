@@ -2,12 +2,15 @@ import os
 import csv
 import sqlite3
 import re
+import argparse
 from datetime import datetime
 from decimal import Decimal, getcontext
 from abc import ABC, abstractmethod
 
 # 设置全局计算精度
 getcontext().prec = 20
+
+DATE_PREFIX_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})_[^.]+\.csv$")
 
 # ==========================================
 # 1. 数据库存储层 (Repository Pattern)
@@ -160,23 +163,85 @@ class ArkDataProcessor:
                     print(f"处理文件: {file}")
                     self.process_file(os.path.join(root, file))
 
+
+def find_latest_date_prefix(root_dir):
+    """返回目录中最新的 CSV 日期前缀，找不到时返回 None。"""
+    latest = None
+    root_dir = os.fspath(root_dir)
+
+    if not os.path.exists(root_dir):
+        return None
+
+    for root, _, files in os.walk(root_dir):
+        for file_name in files:
+            match = DATE_PREFIX_PATTERN.match(file_name)
+            if not match:
+                continue
+
+            file_date = match.group(1)
+            if latest is None or file_date > latest:
+                latest = file_date
+
+    return latest
+
+
+def resolve_scan_date_prefix(root_dir, date_prefix=None, scan_all=False):
+    """根据命令行选项决定本次需要处理的日期范围。"""
+    if scan_all:
+        return None
+    if date_prefix:
+        return date_prefix
+    return find_latest_date_prefix(root_dir)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="将 ARK CSV 数据写入 SQLite 数据库")
+    parser.add_argument(
+        "--date-prefix",
+        help="仅处理指定日期前缀的 CSV，例如 2026-03-27",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="扫描并写入所有历史 CSV 文件",
+    )
+    parser.add_argument(
+        "--root-dir",
+        default="raw_data",
+        help="CSV 根目录，默认值为 raw_data",
+    )
+    parser.add_argument(
+        "--db-path",
+        default="db/ark_data.db",
+        help="SQLite 数据库路径，默认值为 db/ark_data.db",
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    database = SQLiteDatabase(args.db_path)
+    processor = ArkDataProcessor(database, root_dir=args.root_dir)
+
+    target_date = resolve_scan_date_prefix(
+        args.root_dir,
+        date_prefix=args.date_prefix,
+        scan_all=args.all,
+    )
+
+    if args.all:
+        print("执行全量扫描写入。")
+    elif target_date:
+        print(f"执行增量扫描写入，目标日期: {target_date}")
+    else:
+        print("未找到可处理的 CSV 文件，跳过写入。")
+        return
+
+    processor.scan_and_run(target_date)
+
 # ==========================================
 # 3. 程序入口
 # ==========================================
 if __name__ == "__main__":
-    # 设定数据库位置及表名
-    # 物理路径: db/ark_data.db
-    # 逻辑表名: holdings
-    database = SQLiteDatabase("db/ark_data.db")
-    
-    # 初始化解析器
-    processor = ArkDataProcessor(database, root_dir="raw_data")
-    
-    # 建议：如果是初次运行，不传参数扫描全部历史文件
-    # 如果是每日定时任务，可以传今天的日期前缀
-    today_str = datetime.now().strftime('%Y-%m-%d')
-    print(today_str)
-    processor.scan_and_run(today_str)
-    
-    # 这里我们执行全量扫描
-    processor.scan_and_run()
+    main()
