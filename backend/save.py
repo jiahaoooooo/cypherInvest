@@ -22,6 +22,21 @@ class BaseDatabase(ABC):
     @abstractmethod
     def has_records_for_date(self, date_str): pass
 
+    @abstractmethod
+    def get_distinct_companies(self): pass
+
+    @abstractmethod
+    def upsert_company_identity(self, record): pass
+
+    @abstractmethod
+    def get_company_identity(self, ticker): pass
+
+    @abstractmethod
+    def upsert_company_logo(self, record): pass
+
+    @abstractmethod
+    def get_company_logo(self, ticker): pass
+
 class SQLiteDatabase(BaseDatabase):
     def __init__(self, db_path="db/ark_data.db"):
         self.db_path = db_path
@@ -64,6 +79,36 @@ class SQLiteDatabase(BaseDatabase):
                 conn.execute("ALTER TABLE holdings ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
             if 'updated_at' not in columns:
                 conn.execute("ALTER TABLE holdings ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+
+            conn.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS company_identity (
+                    ticker TEXT PRIMARY KEY,
+                    company TEXT,
+                    cusip TEXT,
+                    identifier_type TEXT,
+                    identifier_value TEXT,
+                    resolver TEXT,
+                    status TEXT,
+                    notes TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                '''
+            )
+
+            conn.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS company_logos (
+                    ticker TEXT PRIMARY KEY,
+                    company TEXT,
+                    logo_url TEXT,
+                    logo_path TEXT,
+                    source TEXT,
+                    status TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                '''
+            )
             conn.commit()
 
     def save_records(self, records):
@@ -96,6 +141,98 @@ class SQLiteDatabase(BaseDatabase):
                 (date_str,),
             ).fetchone()
         return row is not None
+
+    def get_distinct_companies(self):
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                '''
+                SELECT ticker, company, cusip
+                FROM holdings
+                WHERE ticker IS NOT NULL AND TRIM(ticker) != ''
+                GROUP BY ticker
+                ORDER BY ticker
+                '''
+            ).fetchall()
+        return rows
+
+    def upsert_company_identity(self, record):
+        now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with self._get_connection() as conn:
+            conn.execute(
+                '''
+                INSERT INTO company_identity (
+                    ticker, company, cusip, identifier_type, identifier_value,
+                    resolver, status, notes, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(ticker) DO UPDATE SET
+                    company = excluded.company,
+                    cusip = excluded.cusip,
+                    identifier_type = excluded.identifier_type,
+                    identifier_value = excluded.identifier_value,
+                    resolver = excluded.resolver,
+                    status = excluded.status,
+                    notes = excluded.notes,
+                    updated_at = excluded.updated_at
+                ''',
+                (
+                    record["ticker"],
+                    record.get("company"),
+                    record.get("cusip"),
+                    record.get("identifier_type"),
+                    record.get("identifier_value"),
+                    record.get("resolver"),
+                    record.get("status"),
+                    record.get("notes"),
+                    now_str,
+                ),
+            )
+            conn.commit()
+
+    def get_company_identity(self, ticker):
+        with self._get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM company_identity WHERE ticker = ?",
+                (ticker,),
+            ).fetchone()
+        return dict(row) if row else None
+
+    def upsert_company_logo(self, record):
+        now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with self._get_connection() as conn:
+            conn.execute(
+                '''
+                INSERT INTO company_logos (
+                    ticker, company, logo_url, logo_path, source, status, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(ticker) DO UPDATE SET
+                    company = excluded.company,
+                    logo_url = excluded.logo_url,
+                    logo_path = excluded.logo_path,
+                    source = excluded.source,
+                    status = excluded.status,
+                    updated_at = excluded.updated_at
+                ''',
+                (
+                    record["ticker"],
+                    record.get("company"),
+                    record.get("logo_url"),
+                    record.get("logo_path"),
+                    record.get("source"),
+                    record.get("status"),
+                    now_str,
+                ),
+            )
+            conn.commit()
+
+    def get_company_logo(self, ticker):
+        with self._get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM company_logos WHERE ticker = ?",
+                (ticker,),
+            ).fetchone()
+        return dict(row) if row else None
 
 # ==========================================
 # 2. 数据解析层 (ETL Logic)

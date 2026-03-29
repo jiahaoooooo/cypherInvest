@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
+      BRANDFETCH_CLIENT_ID: ${{ secrets.BRANDFETCH_CLIENT_ID }}
 
     steps:
       - name: Checkout repository
@@ -34,16 +35,20 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Download latest ARK holdings
-        run: python download.py
+        run: python -m backend.download
 
       - name: Save latest holdings to SQLite
-        run: python save.py
+        run: python -m backend.save
+
+      - name: Sync company logos
+        if: env.BRANDFETCH_CLIENT_ID != ''
+        run: python -m backend.sync_logos
 
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add raw_data db/ark_data.db
+          git add raw_data db/ark_data.db logo_identity_overrides.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
             exit 0

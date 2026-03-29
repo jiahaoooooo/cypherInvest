@@ -1,0 +1,6 @@
+{
+  "TSLA": {
+    "domain": "tesla.com",
+    "notes": "Example override for tickers that need manual domain mapping."
+  }
+}
