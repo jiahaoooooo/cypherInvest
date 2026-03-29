@@ -143,13 +143,17 @@
     .logo-badge {
       width: 34px;
       height: 34px;
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      overflow: hidden;
     }
 
     .logo-badge img {
+      position: relative;
+      z-index: 1;
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -164,6 +168,8 @@
       width: 100%;
       height: 100%;
       border-radius: 10px;
+      position: absolute;
+      inset: 0;
       color: var(--accent-deep);
       background: rgba(36, 162, 106, 0.10);
       font-size: 11px;
@@ -711,8 +717,8 @@
       }
       return `
         <span class="logo-badge">
-          <img src="${logoUrl}" alt="${getTickerLabel(ticker)} logo" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-          <span class="logo-fallback" style="display:none;">${initials}</span>
+          <span class="logo-fallback">${initials}</span>
+          <img src="${logoUrl}" alt="${getTickerLabel(ticker)} logo" loading="lazy" onerror="this.remove();">
         </span>
       `;
     }
