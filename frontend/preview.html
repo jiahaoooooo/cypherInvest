@@ -194,6 +194,10 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    .mobile-holdings {
+      display: none;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -260,6 +264,76 @@
       line-height: 1.6;
     }
 
+    .mobile-holdings-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mobile-holding-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel-strong);
+    }
+
+    .mobile-holding-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .mobile-holding-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .mobile-holding-rank {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .mobile-holding-ticker {
+      color: var(--ticker-strong);
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+
+    .mobile-holding-company {
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .mobile-holding-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mobile-holding-field-label {
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .mobile-holding-field-value {
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
     @media (max-width: 780px) {
       body {
         padding: 18px 12px 32px;
@@ -295,44 +369,25 @@
       }
 
       .table-wrap {
-        margin: 0 -2px;
+        display: none;
       }
 
-      table {
-        min-width: 640px;
+      .mobile-holdings {
+        display: block;
       }
 
-      thead th {
-        font-size: 9px;
-        padding-bottom: 8px;
-      }
-
-      tbody td {
-        padding: 9px 0;
-        font-size: 12px;
-      }
-
-      .table-ticker {
-        gap: 8px;
-      }
-
-      .table-ticker .logo-badge {
+      .logo-badge {
         width: 28px;
         height: 28px;
       }
 
-      .table-ticker .logo-badge img,
-      .table-ticker .logo-fallback {
+      .logo-badge img,
+      .logo-fallback {
         border-radius: 8px;
       }
 
-      .table-ticker .logo-fallback {
+      .logo-fallback {
         font-size: 10px;
-      }
-
-      .company-cell {
-        max-width: 220px;
-        line-height: 1.4;
       }
 
       .page-note {
@@ -367,6 +422,9 @@
             </thead>
             <tbody id="holdings-table-body"></tbody>
           </table>
+        </div>
+        <div class="mobile-holdings">
+          <div class="mobile-holdings-list" id="mobile-holdings-list"></div>
         </div>
         <footer class="page-note">Data <span id="snapshot-date"></span> · Source ARK daily holdings</footer>
       </section>
@@ -560,6 +618,7 @@
 
     const tabs = document.getElementById("fund-tabs");
     const tableBody = document.getElementById("holdings-table-body");
+    const mobileHoldingsList = document.getElementById("mobile-holdings-list");
     const snapshotDateNode = document.getElementById("snapshot-date");
     const brandfetchClientId = "1idQJr-Ms3Lzg65ngwr";
 
@@ -637,6 +696,35 @@
       `).join("");
     }
 
+    function renderMobileHoldings(holdings) {
+      mobileHoldingsList.innerHTML = holdings.map((holding) => `
+        <article class="mobile-holding-card">
+          <div class="mobile-holding-top">
+            ${renderLogo(holding.ticker)}
+            <div class="mobile-holding-meta">
+              <div class="mobile-holding-rank">#${holding.rank ?? ""}</div>
+              <div class="mobile-holding-ticker">${getTickerLabel(holding.ticker)}</div>
+              <div class="mobile-holding-company">${holding.company}</div>
+            </div>
+          </div>
+          <div class="mobile-holding-grid">
+            <div>
+              <div class="mobile-holding-field-label">Weight</div>
+              <div class="mobile-holding-field-value">${formatWeight(holding.weight)}</div>
+            </div>
+            <div>
+              <div class="mobile-holding-field-label">Shares</div>
+              <div class="mobile-holding-field-value">${formatShares(holding.shares)}</div>
+            </div>
+            <div>
+              <div class="mobile-holding-field-label">Value</div>
+              <div class="mobile-holding-field-value">${formatMarketValue(holding.marketValue)}</div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
     function getTableHoldings(fund) {
       const fullHoldings = fullHoldingsByFund[fund.code];
       if (fullHoldings && fullHoldings.length > 0) {
@@ -655,6 +743,7 @@
 
       renderTabs(fund.code);
       renderTable(tableHoldings);
+      renderMobileHoldings(tableHoldings);
       snapshotDateNode.textContent = snapshotDate;
 
       tabs.querySelectorAll("[data-fund]").forEach((button) => {
