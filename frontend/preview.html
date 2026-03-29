@@ -85,6 +85,7 @@
       cursor: pointer;
       position: relative;
       transition: color 220ms ease;
+      white-space: nowrap;
     }
 
     .fund-tab:hover,
@@ -190,6 +191,7 @@
 
     .table-wrap {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table {
@@ -267,10 +269,74 @@
         align-items: start;
       }
 
+      .fund-tabs {
+        flex-wrap: nowrap;
+        gap: 16px;
+        margin-bottom: 26px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 12px;
+        scrollbar-width: thin;
+      }
+
+      .fund-tabs::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .fund-tabs::-webkit-scrollbar-thumb {
+        background: rgba(27, 33, 29, 0.14);
+        border-radius: 999px;
+      }
+
       .table-panel {
         padding-left: 18px;
         padding-right: 18px;
         border-radius: 16px;
+      }
+
+      .table-wrap {
+        margin: 0 -2px;
+      }
+
+      table {
+        min-width: 640px;
+      }
+
+      thead th {
+        font-size: 9px;
+        padding-bottom: 8px;
+      }
+
+      tbody td {
+        padding: 9px 0;
+        font-size: 12px;
+      }
+
+      .table-ticker {
+        gap: 8px;
+      }
+
+      .table-ticker .logo-badge {
+        width: 28px;
+        height: 28px;
+      }
+
+      .table-ticker .logo-badge img,
+      .table-ticker .logo-fallback {
+        border-radius: 8px;
+      }
+
+      .table-ticker .logo-fallback {
+        font-size: 10px;
+      }
+
+      .company-cell {
+        max-width: 220px;
+        line-height: 1.4;
+      }
+
+      .page-note {
+        font-size: 10px;
       }
     }
   </style>
