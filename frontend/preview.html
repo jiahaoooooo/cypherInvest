@@ -40,7 +40,7 @@
     }
 
     .page {
-      max-width: 1240px;
+      max-width: 992px;
       margin: 0 auto;
     }
 
@@ -236,11 +236,41 @@
       color: var(--muted);
     }
 
-    .col-weight,
-    .col-shares,
-    .col-value {
+    .col-weight {
+      width: 78px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .col-visual {
+      width: 88px;
+      text-align: left;
+    }
+
+    .col-shares {
+      width: 110px;
       text-align: right;
       white-space: nowrap;
+    }
+
+    .col-value {
+      width: 132px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .weight-track {
+      width: 72px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(36, 162, 106, 0.10);
+      overflow: hidden;
+    }
+
+    .weight-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: #24a26a;
     }
 
     .ticker-cell {
@@ -251,7 +281,6 @@
 
     .company-cell {
       color: var(--ink);
-      max-width: 340px;
       line-height: 1.5;
     }
 
@@ -332,6 +361,14 @@
       font-size: 12px;
       font-weight: 600;
       line-height: 1.2;
+    }
+
+    .mobile-holding-visual {
+      margin-top: 10px;
+    }
+
+    .mobile-holding-visual .mobile-holding-field-label {
+      margin-bottom: 6px;
     }
 
     @media (max-width: 780px) {
@@ -416,6 +453,7 @@
                 <th>Ticker</th>
                 <th>Company</th>
                 <th class="col-weight">Weight</th>
+                <th class="col-visual">Relative</th>
                 <th class="col-shares">Shares</th>
                 <th class="col-value">Market Value</th>
               </tr>
@@ -640,6 +678,15 @@
       return `${value.toFixed(2)}<span class="weight-symbol">%</span>`;
     }
 
+    function renderWeightBar(value, maxValue) {
+      const ratio = maxValue > 0 ? (value / maxValue) * 100 : 0;
+      return `
+        <div class="weight-track" aria-hidden="true">
+          <div class="weight-fill" style="width:${Math.max(0, Math.min(ratio, 100))}%;"></div>
+        </div>
+      `;
+    }
+
     function getTickerLabel(ticker) {
       return ticker && ticker.trim() ? ticker : "CASH";
     }
@@ -679,6 +726,9 @@
     }
 
     function renderTable(holdings) {
+      const maxWeight = holdings.length > 0
+        ? Math.max(...holdings.map((holding) => Number(holding.weight) || 0))
+        : 0;
       tableBody.innerHTML = holdings.map((holding) => `
         <tr class="holding-row">
           <td class="col-rank">${holding.rank ?? ""}</td>
@@ -690,6 +740,7 @@
           </td>
           <td class="company-cell">${holding.company}</td>
           <td class="col-weight">${formatWeight(holding.weight)}</td>
+          <td class="col-visual">${renderWeightBar(holding.weight, maxWeight)}</td>
           <td class="col-shares">${formatShares(holding.shares)}</td>
           <td class="col-value">${formatMarketValue(holding.marketValue)}</td>
         </tr>
@@ -697,6 +748,9 @@
     }
 
     function renderMobileHoldings(holdings) {
+      const maxWeight = holdings.length > 0
+        ? Math.max(...holdings.map((holding) => Number(holding.weight) || 0))
+        : 0;
       mobileHoldingsList.innerHTML = holdings.map((holding) => `
         <article class="mobile-holding-card">
           <div class="mobile-holding-top">
@@ -720,6 +774,10 @@
               <div class="mobile-holding-field-label">Value</div>
               <div class="mobile-holding-field-value">${formatMarketValue(holding.marketValue)}</div>
             </div>
+          </div>
+          <div class="mobile-holding-visual">
+            <div class="mobile-holding-field-label">Relative</div>
+            ${renderWeightBar(holding.weight, maxWeight)}
           </div>
         </article>
       `).join("");
