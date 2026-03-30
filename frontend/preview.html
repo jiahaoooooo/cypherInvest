@@ -78,9 +78,10 @@
     .fund-tabs {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 18px;
       margin-bottom: 24px;
-      padding-bottom: 14px;
+      padding-top: 0;
     }
 
     .fund-tab {
@@ -110,22 +111,25 @@
       content: "";
       position: absolute;
       left: 50%;
+      top: auto;
       bottom: 0;
       width: 6px;
       height: 6px;
+      margin-top: 0;
       margin-left: -3px;
       border-radius: 999px;
       background: var(--accent);
-      transform: scaleX(0);
+      transform: scale(0);
       transition: transform 220ms ease;
     }
 
     .fund-tab.active {
       color: var(--accent);
+      font-weight: 600;
     }
 
     .fund-tab.active::after {
-      transform: scaleX(1);
+      transform: scale(1);
     }
 
     .layout {
@@ -138,6 +142,43 @@
       border-radius: 20px;
       box-shadow: var(--shadow);
       border: 1px solid var(--line);
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 0 0 12px;
+    }
+
+    .summary-item {
+      min-width: 0;
+    }
+
+    .summary-item:nth-child(2) {
+      text-align: center;
+    }
+
+    .summary-item:nth-child(3) {
+      text-align: right;
+    }
+
+    .summary-item-label {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .summary-item-value {
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      font-weight: 600;
     }
 
     .weight-symbol {
@@ -401,6 +442,8 @@
 
       .fund-tabs {
         flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
         gap: 16px;
         margin-bottom: 26px;
         overflow-x: auto;
@@ -424,12 +467,35 @@
         border-radius: 16px;
       }
 
+      .fund-tab {
+        padding: 0 0 10px;
+        font-size: 14px;
+      }
+
+      .fund-tab::after {
+        left: 50%;
+        top: auto;
+        bottom: 0;
+        margin-top: 0;
+        margin-left: -3px;
+      }
+
       .table-wrap {
         display: none;
       }
 
       .mobile-holdings {
         display: block;
+      }
+
+      .summary-bar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+
+      .summary-item-value {
+        font-size: 18px;
       }
 
       .logo-badge {
@@ -476,17 +542,18 @@
 
     <main class="layout">
       <section class="table-panel">
+        <div class="summary-bar" id="summary-bar"></div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th class="col-rank">Rank</th>
-                <th>Ticker</th>
-                <th>Company</th>
-                <th class="col-weight">Weight</th>
-                <th class="col-visual">Relative</th>
-                <th class="col-shares">Shares</th>
-                <th class="col-value">Market Value</th>
+                <th class="col-rank">排名</th>
+                <th>代码</th>
+                <th>公司</th>
+                <th class="col-weight">权重</th>
+                <th class="col-visual">相对占比</th>
+                <th class="col-shares">持仓股数</th>
+                <th class="col-value">市值</th>
               </tr>
             </thead>
             <tbody id="holdings-table-body"></tbody>
@@ -686,6 +753,7 @@
     let fullHoldingsByFund = {};
 
     const tabs = document.getElementById("fund-tabs");
+    const summaryBar = document.getElementById("summary-bar");
     const tableBody = document.getElementById("holdings-table-body");
     const mobileHoldingsList = document.getElementById("mobile-holdings-list");
     const snapshotDateNode = document.getElementById("snapshot-date");
@@ -703,6 +771,16 @@
         return `$${(value / 1e6).toFixed(2)}M`;
       }
       return `$${new Intl.NumberFormat("en-US").format(Math.round(value))}`;
+    }
+
+    function formatLargeNumber(value) {
+      if (value >= 1e9) {
+        return `${(value / 1e9).toFixed(2)}B`;
+      }
+      if (value >= 1e6) {
+        return `${(value / 1e6).toFixed(2)}M`;
+      }
+      return new Intl.NumberFormat("en-US").format(Math.round(value));
     }
 
     function formatWeight(value) {
@@ -753,6 +831,29 @@
         <button class="fund-tab ${fund.code === activeCode ? "active" : ""}" type="button" data-fund="${fund.code}">
           ${fund.code}
         </button>
+      `).join("");
+    }
+
+    function renderSummaryBar(holdings) {
+      const totalShares = holdings.reduce(
+        (sum, holding) => sum + Number(holding.shares || 0),
+        0,
+      );
+      const totalMarketValue = holdings.reduce(
+        (sum, holding) => sum + Number(holding.marketValue || 0),
+        0,
+      );
+      const holdingsCount = holdings.length;
+
+      summaryBar.innerHTML = [
+        ["持仓数量", String(holdingsCount)],
+        ["总市值", formatMarketValue(totalMarketValue)],
+        ["总持股数", formatLargeNumber(totalShares)],
+      ].map(([label, value]) => `
+        <div class="summary-item">
+          <div class="summary-item-label">${label}</div>
+          <div class="summary-item-value">${value}</div>
+        </div>
       `).join("");
     }
 
@@ -831,6 +932,7 @@
       const tableHoldings = getTableHoldings(fund);
 
       renderTabs(fund.code);
+      renderSummaryBar(tableHoldings);
       renderTable(tableHoldings);
       renderMobileHoldings(tableHoldings);
       snapshotDateNode.textContent = snapshotDate;
