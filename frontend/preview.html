@@ -40,7 +40,7 @@
     }
 
     .page {
-      max-width: 992px;
+      max-width: 1160px;
       margin: 0 auto;
     }
 
@@ -132,16 +132,151 @@
       transform: scale(1);
     }
 
-    .layout {
+    .content-grid {
       display: grid;
-      gap: 34px;
+      grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
     }
 
+    .overview-panel,
     .table-panel {
       background: var(--panel);
       border-radius: 20px;
       box-shadow: var(--shadow);
       border: 1px solid var(--line);
+    }
+
+    .overview-panel {
+      padding: 22px 20px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .overview-block + .overview-block {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .overview-block:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .overview-block h3 {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ticker-strong);
+    }
+
+    .overview-block p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .overview-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .overview-list li {
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.4;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .overview-list li::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--ink);
+      position: absolute;
+      left: 0;
+      top: 0.52em;
+    }
+
+    .overview-placeholder {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .fees-card {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .fees-card h3 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ticker-strong);
+    }
+
+    .fees-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 0;
+    }
+
+    .fees-table tbody tr:first-child td {
+      padding-top: 0;
+    }
+
+    .fees-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.45;
+      vertical-align: top;
+    }
+
+    .fees-table tbody tr:last-child td {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .fees-label {
+      color: var(--ink);
+      padding-right: 12px;
+    }
+
+    .fees-value {
+      color: var(--ink);
+      text-align: right;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .fees-section-row td {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-top: 12px;
+      padding-bottom: 6px;
+      border-bottom: 0;
+    }
+
+    .fees-total .fees-label,
+    .fees-total .fees-value {
+      font-weight: 700;
     }
 
     .summary-bar {
@@ -181,6 +316,22 @@
       font-weight: 600;
     }
 
+    .summary-item-delta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .summary-item-delta.positive {
+      color: #b64646;
+    }
+
+    .summary-item-delta.negative {
+      color: #2f8f67;
+    }
+
     .weight-symbol {
       font-size: 0.58em;
       vertical-align: 0.28em;
@@ -192,6 +343,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
 
     .logo-badge {
@@ -261,7 +413,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 760px;
+      min-width: 680px;
       background: transparent;
     }
 
@@ -299,7 +451,6 @@
     .col-weight {
       width: 78px;
       text-align: left;
-      white-space: nowrap;
     }
 
     .col-visual {
@@ -310,13 +461,44 @@
     .col-shares {
       width: 110px;
       text-align: right;
-      white-space: nowrap;
     }
 
     .col-value {
       width: 132px;
       text-align: right;
+    }
+
+    .metric-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-main {
+      color: var(--ink);
+      line-height: 1.15;
       white-space: nowrap;
+    }
+
+    .metric-delta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .metric-delta:empty,
+    .summary-item-delta:empty,
+    .mobile-holding-field-delta:empty {
+      display: none;
+    }
+
+    .metric-delta.positive {
+      color: #b64646;
+    }
+
+    .metric-delta.negative {
+      color: #2f8f67;
     }
 
     .weight-track {
@@ -334,14 +516,32 @@
     }
 
     .ticker-cell {
+      min-width: 0;
+    }
+
+    .ticker-stack {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .ticker-symbol {
       font-weight: 700;
       letter-spacing: 0.05em;
       color: var(--ticker-strong);
+      line-height: 1.1;
     }
 
-    .company-cell {
-      color: var(--ink);
-      line-height: 1.5;
+    .ticker-company {
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 12px;
+      letter-spacing: 0;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .page-note {
@@ -423,6 +623,21 @@
       line-height: 1.2;
     }
 
+    .mobile-holding-field-delta {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.2;
+      margin-top: 4px;
+    }
+
+    .mobile-holding-field-delta.positive {
+      color: #b64646;
+    }
+
+    .mobile-holding-field-delta.negative {
+      color: #2f8f67;
+    }
+
     .mobile-holding-visual {
       margin-top: 10px;
     }
@@ -461,10 +676,21 @@
         border-radius: 999px;
       }
 
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .overview-panel,
       .table-panel {
         padding-left: 18px;
         padding-right: 18px;
         border-radius: 16px;
+      }
+
+      .overview-panel {
+        position: static;
+        top: auto;
       }
 
       .fund-tab {
@@ -540,7 +766,8 @@
 
     <nav class="fund-tabs" id="fund-tabs" aria-label="ETF tabs"></nav>
 
-    <main class="layout">
+    <main class="content-grid">
+      <aside class="overview-panel" id="overview-panel"></aside>
       <section class="table-panel">
         <div class="summary-bar" id="summary-bar"></div>
         <div class="table-wrap">
@@ -548,8 +775,7 @@
             <thead>
               <tr>
                 <th class="col-rank">排名</th>
-                <th>代码</th>
-                <th>公司</th>
+                <th>代码 / 公司</th>
                 <th class="col-weight">权重</th>
                 <th class="col-visual">相对占比</th>
                 <th class="col-shares">持仓股数</th>
@@ -562,13 +788,12 @@
         <div class="mobile-holdings">
           <div class="mobile-holdings-list" id="mobile-holdings-list"></div>
         </div>
-        <footer class="page-note">Data <span id="snapshot-date"></span> · Source ARK daily holdings</footer>
+        <footer class="page-note" id="page-note"></footer>
       </section>
     </main>
   </div>
 
   <script>
-    const snapshotDate = "2026-03-27";
     const etfs = [
       {
         code: "ARKK",
@@ -750,14 +975,319 @@
 
     const defaultFundCode = "ARKK";
     const holdingsSnapshotUrl = "./ark-holdings-latest.json";
+    const fundFeesCopy = {
+      ARKK: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.75%", total: true },
+        ],
+      },
+      ARKQ: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.75%", total: true },
+        ],
+      },
+      ARKW: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.01%" },
+          { label: "总费用", value: "0.76%", total: true },
+        ],
+      },
+      ARKG: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.75%", total: true },
+        ],
+      },
+      ARKF: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.75%", total: true },
+        ],
+      },
+      ARKX: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.75%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.00%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.75%", total: true },
+        ],
+      },
+      PRNT: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.65%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.01%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.66%", total: true },
+        ],
+      },
+      IZRL: {
+        title: "费用信息",
+        rows: [
+          { section: "持有人费用" },
+          { label: "持有人费用", value: "无" },
+          { section: "年度基金运营费用" },
+          { label: "管理费", value: "0.48%" },
+          { label: "销售及服务费（12b-1）", value: "0.00%" },
+          { label: "其他费用", value: "0.01%" },
+          { label: "持有其他基金费用", value: "0.00%" },
+          { label: "总费用", value: "0.49%", total: true },
+        ],
+      },
+    };
+    const fundOverviewCopy = {
+      ARKK: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKK 是一只主动管理型交易所交易基金（ETF），其目标是在正常情况下主要投资于与“颠覆性创新”主题相关的境内外股票证券，并通过这类配置实现资本的长期增长。基金通常至少将 65% 的资产投入这一主题相关公司。",
+          },
+          {
+            heading: "基金简介",
+            body: "ARK 将“颠覆性创新”定义为由技术驱动的新产品或服务的引入，这类创新有潜力改变世界的运行方式。ARKK 重点覆盖那些依赖于新产品、新服务、技术升级以及科学研究突破而受益的公司。",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "智能设备",
+              "自动驾驶与智能出行",
+              "精准治疗",
+              "神经网络",
+              "下一代云",
+              "数字钱包",
+              "数字资产",
+              "智能合约",
+              "多组学技术",
+            ],
+          },
+        ],
+      },
+      ARKQ: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKQ 是一只主动管理型交易所交易基金（ETF），旨在通过投资于与“颠覆性创新”主题相关的自动驾驶技术与机器人公司，实现资本的长期增长。在正常情况下，基金至少将 80% 的资产投资于相关境内外股票证券。",
+          },
+          {
+            heading: "基金简介",
+            body: "ARKQ 持有的公司聚焦于能源、自动化与制造、材料、人工智能和交通运输等领域的新产品、新服务、技术升级与科研突破，并有望从这些趋势中显著受益。这些公司可能开发、生产或赋能以下方向：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "自动驾驶与智能出行",
+              "智能设备",
+              "先进电池技术",
+              "自适应机器人",
+              "神经网络",
+              "可重复使用火箭",
+              "下一代云",
+              "3D 打印",
+            ],
+          },
+        ],
+      },
+      ARKW: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKW 是一只主动管理型交易所交易基金（ETF），旨在通过主要投资于与“下一代互联网”主题相关的美国本土及在美国交易所上市的海外公司股票，实现资本的长期增长。在正常情况下，基金至少将 80% 的资产投入该主题相关股票证券。",
+          },
+          {
+            heading: "基金简介",
+            body: "ARKW 持有的公司聚焦于将技术基础设施迁移至云端、推动移动化、新型及本地化服务，并受益于共享技术、共享基础设施、互联网产品与服务、新型支付方式、大数据、物联网及社交分发与媒体的发展。这些公司可能开发、生产或赋能以下方向：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "智能设备",
+              "下一代云",
+              "神经网络",
+              "数字钱包",
+              "自动驾驶与智能出行",
+              "加密货币",
+              "智能合约",
+            ],
+          },
+        ],
+      },
+      ARKG: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKG 是一只主动管理型交易所交易基金（ETF），旨在通过投资于与“基因组革命”主题相关的多行业公司股票，实现资本的长期增长。这些公司横跨医疗保健、信息技术、材料、能源和可选消费等领域。在正常情况下，基金至少将 80% 的资产配置于相关境内外股票证券。",
+          },
+          {
+            heading: "基金简介",
+            body: "ARKG 持有的公司致力于将基因组学领域的技术与科研进展融入业务，以延长并提升人类及其他生命体的生命质量。ARKG 将集中投资于医疗健康板块中的发行人，尤其包括以生物技术为核心业务的公司。基金持有公司可能是以下技术方向的领导者、赋能者或受益者：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "精准治疗",
+              "多组学技术",
+              "可编程生物学",
+              "神经网络",
+              "下一代云",
+              "自适应机器人",
+            ],
+          },
+        ],
+      },
+      ARKF: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKF 是一只主动管理型交易所交易基金（ETF），旨在实现资本的长期增长。基金在正常情况下主要投资于从事区块链与金融科技创新主题的境内外公司股票证券，且至少将 80% 的资产配置于该主题相关公司。",
+          },
+          {
+            heading: "基金简介",
+            body: "如果一家公司的重要收入来源或市场价值与金融科技创新相关，或其主营业务明确聚焦于金融科技创新相关产品与服务，则可被视为属于区块链或金融科技创新主题。ARK 将“金融科技创新”定义为由技术驱动、可能改变金融行业运作方式的新产品或服务，其覆盖的平台包括：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "数字钱包",
+              "智能设备",
+              "神经网络",
+              "下一代云",
+              "加密货币",
+            ],
+          },
+          {
+            heading: "补充说明",
+            body: "自 2025 年 11 月 23 日起，ARK Fintech Innovation ETF 更名为 ARK Blockchain & Fintech Innovation ETF，基金投资政策也同步调整为在正常情况下至少将 80% 的资产投资于区块链与金融科技创新主题公司股票，而此前仅覆盖金融科技创新公司。这一调整不会对基金的管理方式、持仓结构或投资目标产生实质影响。",
+          },
+        ],
+      },
+      ARKX: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARKX 是一只主动管理型交易所交易基金（ETF），旨在通过投资于从事太空探索与国防创新主题的境内外公司股票，实现资本的长期增长。在正常情况下，基金至少将 80% 的资产配置于这一主题相关股票证券。",
+          },
+          {
+            heading: "基金简介",
+            body: "ARKX 持有的公司聚焦于“太空”或“国防创新”领域。基金顾问将其定义为那些主导、赋能或受益于地球表面之外技术驱动型产品和服务的公司，覆盖方向包括：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "自动驾驶与智能出行",
+              "智能设备",
+              "先进电池技术",
+              "3D 打印",
+              "可重复使用火箭",
+              "自适应机器人",
+              "神经网络",
+            ],
+          },
+        ],
+      },
+      PRNT: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "3D Printing ETF（PRNT）旨在扣除费用前尽可能紧密追踪 Total 3D-Printing Index 的表现。该指数用于跟踪参与 3D 打印产业公司的股票价格变动。",
+          },
+          {
+            heading: "指数简介",
+            body: "Total 3D-Printing Index 由来自美国、非美发达市场及中国台湾证券市场的上市公司股票与存托凭证构成，这些公司从事 3D 打印相关业务，覆盖的业务线包括：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "3D 打印硬件",
+              "计算机辅助设计（CAD）与仿真软件",
+              "3D 打印服务中心",
+              "扫描与测量",
+              "3D 打印材料",
+            ],
+          },
+        ],
+      },
+      IZRL: {
+        sections: [
+          {
+            heading: "基金目标",
+            body: "ARK Israel Innovative Technology ETF（IZRL）旨在扣除费用前尽可能紧密追踪 ARK Israeli Innovation Index 的表现。该指数用于跟踪在交易所上市、主营业务在基因组学、医疗健康、生物技术、工业、制造、互联网或信息技术等领域推动颠覆性创新的以色列公司股价表现。",
+          },
+          {
+            heading: "指数简介",
+            body: "该指数聚焦于主营业务在上述领域推动颠覆性创新的以色列上市公司。指数成分包括在以色列注册和/或以以色列为注册地的上市公司股票与存托凭证，并覆盖 FactSet Research Systems 定义的以下经济板块：",
+          },
+          {
+            heading: "重点方向",
+            items: [
+              "健康科技",
+              "通信",
+              "技术服务",
+              "电子科技",
+              "消费者服务",
+              "生产制造",
+            ],
+          },
+        ],
+      },
+    };
     let fullHoldingsByFund = {};
 
     const tabs = document.getElementById("fund-tabs");
+    const overviewPanel = document.getElementById("overview-panel");
     const summaryBar = document.getElementById("summary-bar");
     const tableBody = document.getElementById("holdings-table-body");
     const mobileHoldingsList = document.getElementById("mobile-holdings-list");
-    const snapshotDateNode = document.getElementById("snapshot-date");
+    const pageNoteNode = document.getElementById("page-note");
     const brandfetchClientId = "1idQJr-Ms3Lzg65ngwr";
+    let fundSummaries = {};
+    let snapshotDate = "";
+    let previousSnapshotDate = "";
 
     function formatShares(value) {
       return new Intl.NumberFormat("en-US").format(value);
@@ -785,6 +1315,56 @@
 
     function formatWeight(value) {
       return `${value.toFixed(2)}<span class="weight-symbol">%</span>`;
+    }
+
+    function formatDeltaNumber(value) {
+      return new Intl.NumberFormat("en-US").format(Math.abs(Math.round(value)));
+    }
+
+    function formatDeltaValue(value, formatter) {
+      if (value === null || value === undefined) {
+        return {
+          className: "",
+          text: "--",
+        };
+      }
+
+      if (value === 0) {
+        return {
+          className: "",
+          text: "",
+        };
+      }
+
+      const className = value > 0 ? "positive" : "negative";
+      return {
+        className,
+        text: `${value > 0 ? "+" : "-"}${formatter(Math.abs(value))}`,
+      };
+    }
+
+    function formatWeightDelta(value) {
+      return formatDeltaValue(
+        value,
+        (absoluteValue) => `${absoluteValue.toFixed(2)}%`,
+      );
+    }
+
+    function formatSharesDelta(value) {
+      return formatDeltaValue(value, formatDeltaNumber);
+    }
+
+    function formatMarketValueDelta(value) {
+      return formatDeltaValue(value, (absoluteValue) => formatMarketValue(absoluteValue));
+    }
+
+    function renderMetricCell(mainHtml, delta) {
+      return `
+        <div class="metric-cell">
+          <div class="metric-main">${mainHtml}</div>
+          <div class="metric-delta ${delta.className}">${delta.text}</div>
+        </div>
+      `;
     }
 
     function renderWeightBar(value, maxValue) {
@@ -834,27 +1414,79 @@
       `).join("");
     }
 
-    function renderSummaryBar(holdings) {
-      const totalShares = holdings.reduce(
+    function renderSummaryBar(fundCode, holdings) {
+      const summary = fundSummaries[fundCode];
+      const totalShares = summary?.total_shares ?? holdings.reduce(
         (sum, holding) => sum + Number(holding.shares || 0),
         0,
       );
-      const totalMarketValue = holdings.reduce(
-        (sum, holding) => sum + Number(holding.marketValue || 0),
+      const totalMarketValue = summary?.total_market_value ?? holdings.reduce(
+        (sum, holding) => sum + Number(holding.marketValue ?? holding.market_value ?? 0),
         0,
       );
-      const holdingsCount = holdings.length;
+      const holdingsCount = summary?.holdings_count ?? holdings.length;
 
       summaryBar.innerHTML = [
-        ["持仓数量", String(holdingsCount)],
-        ["总市值", formatMarketValue(totalMarketValue)],
-        ["总持股数", formatLargeNumber(totalShares)],
-      ].map(([label, value]) => `
+        ["持仓数量", String(holdingsCount), formatDeltaValue(summary?.holdings_count_delta ?? null, formatDeltaNumber)],
+        ["总市值", formatMarketValue(totalMarketValue), formatMarketValueDelta(summary?.total_market_value_delta ?? null)],
+        ["总持股数", formatLargeNumber(totalShares), formatSharesDelta(summary?.total_shares_delta ?? null)],
+      ].map(([label, value, delta]) => `
         <div class="summary-item">
           <div class="summary-item-label">${label}</div>
           <div class="summary-item-value">${value}</div>
+          <div class="summary-item-delta ${delta.className}">${delta.text}</div>
         </div>
       `).join("");
+    }
+
+    function renderOverview(fund) {
+      const overview = fundOverviewCopy[fund.code];
+      const fees = fundFeesCopy[fund.code];
+
+      if (!overview) {
+        overviewPanel.innerHTML = `
+          <p class="overview-placeholder">该 ETF 的中文简介待补充。你把文案给我后，我会按这套样式继续补齐。</p>
+        `;
+        return;
+      }
+
+      overviewPanel.innerHTML = `
+        ${overview.sections.map((section) => `
+          <section class="overview-block">
+            <h3>${section.heading}</h3>
+            ${section.body ? `<p>${section.body}</p>` : ""}
+            ${section.items ? `
+              <ul class="overview-list">
+                ${section.items.map((item) => `<li>${item}</li>`).join("")}
+              </ul>
+            ` : ""}
+          </section>
+        `).join("")}
+        ${fees ? `
+          <section class="fees-card">
+            <h3>${fees.title}</h3>
+            <table class="fees-table">
+              <tbody>
+                ${fees.rows.map((row) => {
+                  if (row.section) {
+                    return `
+                      <tr class="fees-section-row">
+                        <td colspan="2">${row.section}</td>
+                      </tr>
+                    `;
+                  }
+                  return `
+                    <tr class="${row.total ? "fees-total" : ""}">
+                      <td class="fees-label">${row.label}</td>
+                      <td class="fees-value">${row.value}</td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </section>
+        ` : ""}
+      `;
     }
 
     function renderTable(holdings) {
@@ -867,14 +1499,25 @@
           <td class="ticker-cell">
             <div class="table-ticker">
               ${renderLogo(holding.ticker)}
-              <span>${getTickerLabel(holding.ticker)}</span>
+              <div class="ticker-stack">
+                <span class="ticker-symbol">${getTickerLabel(holding.ticker)}</span>
+                <span class="ticker-company">${holding.company}</span>
+              </div>
             </div>
           </td>
-          <td class="company-cell">${holding.company}</td>
-          <td class="col-weight">${formatWeight(holding.weight)}</td>
+          <td class="col-weight">${renderMetricCell(
+            formatWeight(holding.weight),
+            formatWeightDelta(holding.weightDelta),
+          )}</td>
           <td class="col-visual">${renderWeightBar(holding.weight, maxWeight)}</td>
-          <td class="col-shares">${formatShares(holding.shares)}</td>
-          <td class="col-value">${formatMarketValue(holding.marketValue)}</td>
+          <td class="col-shares">${renderMetricCell(
+            formatShares(holding.shares),
+            formatSharesDelta(holding.sharesDelta),
+          )}</td>
+          <td class="col-value">${renderMetricCell(
+            formatMarketValue(holding.marketValue),
+            formatMarketValueDelta(holding.marketValueDelta),
+          )}</td>
         </tr>
       `).join("");
     }
@@ -897,14 +1540,17 @@
             <div>
               <div class="mobile-holding-field-label">Weight</div>
               <div class="mobile-holding-field-value">${formatWeight(holding.weight)}</div>
+              <div class="mobile-holding-field-delta ${formatWeightDelta(holding.weightDelta).className}">${formatWeightDelta(holding.weightDelta).text}</div>
             </div>
             <div>
               <div class="mobile-holding-field-label">Shares</div>
               <div class="mobile-holding-field-value">${formatShares(holding.shares)}</div>
+              <div class="mobile-holding-field-delta ${formatSharesDelta(holding.sharesDelta).className}">${formatSharesDelta(holding.sharesDelta).text}</div>
             </div>
             <div>
               <div class="mobile-holding-field-label">Value</div>
               <div class="mobile-holding-field-value">${formatMarketValue(holding.marketValue)}</div>
+              <div class="mobile-holding-field-delta ${formatMarketValueDelta(holding.marketValueDelta).className}">${formatMarketValueDelta(holding.marketValueDelta).text}</div>
             </div>
           </div>
           <div class="mobile-holding-visual">
@@ -921,7 +1567,10 @@
         return fullHoldings.map((holding, index) => ({
           ...holding,
           rank: index + 1,
-          marketValue: holding.marketValue ?? holding.market_value
+          marketValue: holding.marketValue ?? holding.market_value,
+          weightDelta: holding.weightDelta ?? holding.weight_delta ?? null,
+          sharesDelta: holding.sharesDelta ?? holding.shares_delta ?? null,
+          marketValueDelta: holding.marketValueDelta ?? holding.market_value_delta ?? null,
         }));
       }
       return fund.holdings;
@@ -932,10 +1581,17 @@
       const tableHoldings = getTableHoldings(fund);
 
       renderTabs(fund.code);
-      renderSummaryBar(tableHoldings);
+      renderOverview(fund);
+      renderSummaryBar(fund.code, tableHoldings);
       renderTable(tableHoldings);
       renderMobileHoldings(tableHoldings);
-      snapshotDateNode.textContent = snapshotDate;
+      pageNoteNode.textContent = snapshotDate
+        ? (
+          previousSnapshotDate
+            ? `数据日期 ${snapshotDate} · 较前一交易日（${previousSnapshotDate}）`
+            : `数据日期 ${snapshotDate}`
+        )
+        : "";
 
       tabs.querySelectorAll("[data-fund]").forEach((button) => {
         button.addEventListener("click", () => renderPage(button.dataset.fund));
@@ -949,7 +1605,12 @@
         }
         return response.json();
       })
-      .then((rows) => {
+      .then((payload) => {
+        const rows = Array.isArray(payload) ? payload : (payload.holdings || []);
+        snapshotDate = Array.isArray(payload) ? snapshotDate : (payload.snapshot_date || "");
+        previousSnapshotDate = Array.isArray(payload) ? "" : (payload.previous_snapshot_date || "");
+        fundSummaries = Array.isArray(payload) ? {} : (payload.fund_summaries || {});
+
         fullHoldingsByFund = rows.reduce((grouped, row) => {
           const fundRows = grouped[row.fund] || [];
           fundRows.push({
@@ -957,7 +1618,10 @@
             company: row.company,
             weight: Number(row.weight),
             shares: Number(row.shares),
-            marketValue: Number(row.market_value)
+            marketValue: Number(row.market_value),
+            weightDelta: row.weight_delta === null ? null : Number(row.weight_delta),
+            sharesDelta: row.shares_delta === null ? null : Number(row.shares_delta),
+            marketValueDelta: row.market_value_delta === null ? null : Number(row.market_value_delta),
           });
           grouped[row.fund] = fundRows;
           return grouped;
@@ -965,6 +1629,8 @@
       })
       .catch(() => {
         fullHoldingsByFund = {};
+        snapshotDate = "";
+        previousSnapshotDate = "";
       })
       .finally(() => {
         renderPage(defaultFundCode);
