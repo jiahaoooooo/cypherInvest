@@ -35,6 +35,14 @@ jobs:
       - name: Export latest frontend snapshot
         run: python -m backend.export_frontend_snapshot
 
+      - name: Export latest trades snapshot
+        run: |
+          if [ -f backend/export_trades_snapshot.py ] && find daliy-trade -name '*.xls' -print -quit | grep -q .; then
+            python -m backend.export_trades_snapshot
+          else
+            echo "Skipping trades snapshot export because script or trade .xls data is unavailable."
+          fi
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
