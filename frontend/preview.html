@@ -344,6 +344,7 @@
       align-items: center;
       gap: 10px;
       min-width: 0;
+      position: relative;
     }
 
     .logo-badge {
@@ -533,12 +534,31 @@
       line-height: 1.1;
     }
 
+    .ticker-marker {
+      position: absolute;
+      left: -26px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 900;
+      background: transparent;
+    }
+
+    .ticker-marker--up {
+      color: #b64646;
+    }
+
+    .ticker-marker--down {
+      color: #2f8f67;
+    }
+
     .ticker-company {
       color: var(--muted);
       line-height: 1.35;
       font-size: 12px;
       letter-spacing: 0;
-      font-weight: 500;
+      font-weight: 400;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -570,6 +590,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
+      position: relative;
     }
 
     .mobile-holding-meta {
@@ -598,6 +619,7 @@
       color: var(--ink);
       font-size: 13px;
       line-height: 1.35;
+      font-weight: 400;
     }
 
     .mobile-holding-grid {
@@ -974,7 +996,7 @@
     ];
 
     const defaultFundCode = "ARKK";
-    const holdingsSnapshotUrl = "./ark-holdings-latest.json";
+    const holdingsSnapshotUrl = `./ark-holdings-latest.json?v=${Date.now()}`;
     const fundFeesCopy = {
       ARKK: {
         title: "费用信息",
@@ -1493,11 +1515,13 @@
       const maxWeight = holdings.length > 0
         ? Math.max(...holdings.map((holding) => Number(holding.weight) || 0))
         : 0;
+      const markers = getWeightDeltaMarkers(holdings);
       tableBody.innerHTML = holdings.map((holding) => `
         <tr class="holding-row">
           <td class="col-rank">${holding.rank ?? ""}</td>
           <td class="ticker-cell">
             <div class="table-ticker">
+              ${renderWeightDeltaMarker(markers, holding.ticker)}
               ${renderLogo(holding.ticker)}
               <div class="ticker-stack">
                 <span class="ticker-symbol">${getTickerLabel(holding.ticker)}</span>
@@ -1526,9 +1550,11 @@
       const maxWeight = holdings.length > 0
         ? Math.max(...holdings.map((holding) => Number(holding.weight) || 0))
         : 0;
+      const markers = getWeightDeltaMarkers(holdings);
       mobileHoldingsList.innerHTML = holdings.map((holding) => `
         <article class="mobile-holding-card">
           <div class="mobile-holding-top">
+            ${renderWeightDeltaMarker(markers, holding.ticker)}
             ${renderLogo(holding.ticker)}
             <div class="mobile-holding-meta">
               <div class="mobile-holding-rank">#${holding.rank ?? ""}</div>
@@ -1574,6 +1600,39 @@
         }));
       }
       return fund.holdings;
+    }
+
+    function getWeightDeltaMarkers(holdings) {
+      if (!Array.isArray(holdings) || holdings.length === 0) {
+        return { upTicker: null, downTicker: null };
+      }
+
+      const candidates = holdings.filter((holding) => Number.isFinite(Number(holding.weightDelta)));
+      if (candidates.length === 0) {
+        return { upTicker: null, downTicker: null };
+      }
+
+      const largestIncrease = candidates.reduce((largest, current) => (
+        Number(current.weightDelta) > Number(largest.weightDelta) ? current : largest
+      ));
+      const largestDecrease = candidates.reduce((largest, current) => (
+        Number(current.weightDelta) < Number(largest.weightDelta) ? current : largest
+      ));
+
+      return {
+        upTicker: Number(largestIncrease.weightDelta) > 0 ? largestIncrease.ticker : null,
+        downTicker: Number(largestDecrease.weightDelta) < 0 ? largestDecrease.ticker : null,
+      };
+    }
+
+    function renderWeightDeltaMarker(markers, ticker) {
+      if (ticker === markers.upTicker) {
+        return '<span class="ticker-marker ticker-marker--up" aria-label="增持最多">⬆</span>';
+      }
+      if (ticker === markers.downTicker) {
+        return '<span class="ticker-marker ticker-marker--down" aria-label="减持最多">⬇</span>';
+      }
+      return "";
     }
 
     function renderPage(activeCode) {
