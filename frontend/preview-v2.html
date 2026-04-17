@@ -1444,14 +1444,17 @@
     #overview-panel .key-area-tags {
       display: flex;
       flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
       gap: 8px;
       padding: 0;
+      width: 100%;
     }
 
     #overview-panel .key-area-tag {
       display: inline-flex;
       align-items: center;
-      padding: 4px 8px;
+      padding: 4px 8px 4px 0;
       background: #edf3ff;
       color: var(--accent-shell);
       border-radius: 2px;
@@ -1699,7 +1702,7 @@
 
         <section class="analytics-grid">
           <article class="analytics-panel">
-            <h2 class="analytics-title">Sector Allocation</h2>
+            <h2 class="analytics-title" id="sector-allocation-title">持仓权重</h2>
             <div class="allocation-list" id="sector-allocation"></div>
             <div class="analytics-toggle-wrap" id="sector-toggle-wrap"></div>
           </article>
@@ -2220,6 +2223,7 @@
     const heroLeadNode = document.getElementById("hero-lead");
     const heroMetaNode = document.getElementById("hero-meta");
     const heroTagsNode = document.getElementById("hero-tags");
+    const sectorAllocationTitleNode = document.getElementById("sector-allocation-title");
     const sectorAllocationNode = document.getElementById("sector-allocation");
     const sectorToggleWrap = document.getElementById("sector-toggle-wrap");
     const performanceValueNode = document.getElementById("performance-value");
@@ -2630,9 +2634,11 @@
     }
 
     function renderAnalytics(fund, holdings) {
-      const visibleSectorRows = expandedSectorFunds.has(fund.code)
+      const expanded = expandedSectorFunds.has(fund.code);
+      const visibleSectorRows = expanded
         ? holdings
         : holdings.slice(0, 10);
+      sectorAllocationTitleNode.textContent = "持仓权重";
       const topFive = holdings.slice(0, 5);
       const totalTopFiveWeight = topFive.reduce((sum, holding) => sum + Number(holding.weight || 0), 0);
       const maxWeight = visibleSectorRows.length > 0
@@ -2656,7 +2662,6 @@
         return;
       }
 
-      const expanded = expandedSectorFunds.has(fund.code);
       sectorToggleWrap.innerHTML = `
         <button class="analytics-toggle" type="button" data-sector-toggle="${fund.code}">
           ${expanded ? "收起剩余项目" : `展开剩余 ${holdings.length - 10} 项`}

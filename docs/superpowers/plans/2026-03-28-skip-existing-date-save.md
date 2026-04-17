@@ -4,7 +4,7 @@
 
 **Goal:** Skip the daily SQLite import when the latest CSV date already exists in the database.
 
-**Architecture:** Keep the change inside `save.py` by adding one database lookup for a target date and one orchestration helper that decides whether to scan files. Reuse the existing date-resolution logic so the daily workflow behavior stays simple and predictable.
+**Architecture:** Keep the change inside `backend/save.py` by adding one database lookup for a target date and one orchestration helper that decides whether to scan files. Reuse the existing date-resolution logic so the daily workflow behavior stays simple and predictable.
 
 **Tech Stack:** Python 3, `sqlite3`, `unittest`
 
@@ -46,14 +46,14 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tests/test_save.py save.py
+git add tests/test_save.py backend/save.py
 git commit -m "fix: skip duplicate daily sqlite imports"
 ```
 
-### Task 2: Integrate database date check into save.py main flow
+### Task 2: Integrate database date check into backend/save.py main flow
 
 **Files:**
-- Modify: `save.py`
+- Modify: `backend/save.py`
 - Test: `tests/test_save.py`
 
 - [ ] **Step 1: Write the failing test**
@@ -90,6 +90,6 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tests/test_save.py save.py
+git add tests/test_save.py backend/save.py
 git commit -m "fix: avoid rewriting unchanged ARK daily data"
 ```

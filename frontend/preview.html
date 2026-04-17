@@ -4,24 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CypherInvest / ARK ETF Structure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper: #f6f7f4;
-      --paper-strong: #ffffff;
-      --paper-deep: #f1f3ef;
-      --ink: #1b211d;
-      --muted: #7b847d;
-      --line: rgba(27, 33, 29, 0.08);
-      --line-strong: rgba(27, 33, 29, 0.14);
-      --accent: #00B7B5;
-      --accent-deep: #00B7B5;
-      --ticker-strong: #00B7B5;
-      --accent-soft: rgba(0, 183, 181, 0.10);
-      --panel: #ffffff;
-      --panel-strong: #fbfcfa;
-      --shadow: 0 1px 2px rgba(27, 33, 29, 0.02), 0 8px 24px rgba(27, 33, 29, 0.04);
-      --font-rounded: "Avenir Next Rounded", "SF Pro Rounded", "Nunito", "Helvetica Neue", sans-serif;
-      --font-display: "Avenir Next", "Helvetica Neue", sans-serif;
+      --paper: rgb(248, 249, 255);
+      --paper-strong: #fcfffe;
+      --paper-deep: #e8f3f1;
+      --ink: #1f3533;
+      --muted: #6f8b87;
+      --line: rgba(73, 126, 121, 0.12);
+      --line-strong: rgba(73, 126, 121, 0.18);
+      --accent: #4cb7af;
+      --accent-deep: #319d96;
+      --ticker-strong: #2f9891;
+      --accent-soft: rgba(76, 183, 175, 0.08);
+      --panel: rgb(255, 255, 255);
+      --panel-strong: #f6fbfa;
+      --shadow: 0 1px 3px rgba(44, 96, 92, 0.04);
+      --font-rounded: "Manrope", "Avenir Next Rounded", "SF Pro Rounded", "Nunito", "Helvetica Neue", sans-serif;
+      --font-display: "Manrope", "Avenir Next", "Helvetica Neue", sans-serif;
     }
 
     * { box-sizing: border-box; }
@@ -89,7 +92,7 @@
       border: 0;
       background: transparent;
       color: var(--muted);
-      border-radius: 0;
+      border-radius: 6px 6px 0 0;
       padding: 0 0 10px;
       font: inherit;
       font-size: 14px;
@@ -110,16 +113,14 @@
     .fund-tab::after {
       content: "";
       position: absolute;
-      left: 50%;
-      top: auto;
+      left: 0;
+      right: 0;
       bottom: 0;
-      width: 6px;
-      height: 6px;
-      margin-top: 0;
-      margin-left: -3px;
-      border-radius: 999px;
+      width: 100%;
+      height: 2px;
       background: var(--accent);
-      transform: scale(0);
+      transform: scaleX(0);
+      transform-origin: center;
       transition: transform 220ms ease;
     }
 
@@ -129,7 +130,7 @@
     }
 
     .fund-tab.active::after {
-      transform: scale(1);
+      transform: scaleX(1);
     }
 
     .content-grid {
@@ -142,7 +143,7 @@
     .overview-panel,
     .table-panel {
       background: var(--panel);
-      border-radius: 20px;
+      border-radius: 8px;
       box-shadow: var(--shadow);
       border: 1px solid var(--line);
     }
@@ -201,11 +202,33 @@
       content: "";
       width: 5px;
       height: 5px;
-      border-radius: 999px;
+      border-radius: 1px;
       background: var(--ink);
       position: absolute;
       left: 0;
       top: 0.52em;
+    }
+
+    .overview-list.tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .overview-list.tags li {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.2;
+      padding: 6px 8px;
+      position: static;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(76, 183, 175, 0.04);
+      white-space: nowrap;
+    }
+
+    .overview-list.tags li::before {
+      content: none;
     }
 
     .overview-placeholder {
@@ -350,22 +373,20 @@
     .logo-badge {
       width: 34px;
       height: 34px;
-      position: relative;
+      position: static;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .logo-badge img {
-      position: relative;
-      z-index: 1;
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
-      border-radius: 10px;
+      border-radius: 4px;
     }
 
     .logo-fallback {
@@ -374,11 +395,10 @@
       justify-content: center;
       width: 100%;
       height: 100%;
-      border-radius: 10px;
-      position: absolute;
-      inset: 0;
+      border-radius: 0;
+      position: static;
       color: var(--accent-deep);
-      background: rgba(0, 183, 181, 0.10);
+      background: transparent;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -391,7 +411,7 @@
 
     .table-ticker .logo-badge img,
     .table-ticker .logo-fallback {
-      border-radius: 10px;
+      border-radius: 4px;
     }
 
     .table-ticker .logo-fallback {
@@ -425,13 +445,13 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       padding: 0 0 10px;
-      border-bottom: 1px solid var(--line-strong);
+      border-bottom: 0;
       font-weight: 600;
     }
 
     tbody td {
       padding: 10px 0;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
       font-size: 13px;
       vertical-align: middle;
     }
@@ -441,7 +461,7 @@
     }
 
     tbody tr:hover {
-      background: rgba(0, 183, 181, 0.03);
+      background: rgba(76, 183, 175, 0.04);
     }
 
     .col-rank {
@@ -504,16 +524,16 @@
 
     .weight-track {
       width: 72px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(0, 183, 181, 0.10);
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(76, 183, 175, 0.08);
       overflow: hidden;
     }
 
     .weight-fill {
       height: 100%;
-      border-radius: inherit;
-      background: #00B7B5;
+      border-radius: 0;
+      background: #56bdb6;
     }
 
     .ticker-cell {
@@ -581,8 +601,8 @@
     .mobile-holding-card {
       padding: 14px;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--panel-strong);
+      border-radius: 8px;
+      background: rgba(252, 255, 254, 0.72);
     }
 
     .mobile-holding-top {
@@ -695,7 +715,7 @@
 
       .fund-tabs::-webkit-scrollbar-thumb {
         background: rgba(27, 33, 29, 0.14);
-        border-radius: 999px;
+        border-radius: 0;
       }
 
       .content-grid {
@@ -707,7 +727,7 @@
       .table-panel {
         padding-left: 18px;
         padding-right: 18px;
-        border-radius: 16px;
+        border-radius: 8px;
       }
 
       .overview-panel {
@@ -721,11 +741,9 @@
       }
 
       .fund-tab::after {
-        left: 50%;
-        top: auto;
+        left: 0;
+        right: 0;
         bottom: 0;
-        margin-top: 0;
-        margin-left: -3px;
       }
 
       .table-wrap {
@@ -753,7 +771,7 @@
 
       .logo-badge img,
       .logo-fallback {
-        border-radius: 8px;
+        border-radius: 4px;
       }
 
       .logo-fallback {
@@ -1407,6 +1425,15 @@
       return (cleaned.slice(0, 2) || "CF").toUpperCase();
     }
 
+    function formatCompanyName(company) {
+      return String(company || "")
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
     function buildLogoUrl(ticker) {
       if (!ticker || !ticker.trim()) {
         return null;
@@ -1478,7 +1505,7 @@
             <h3>${section.heading}</h3>
             ${section.body ? `<p>${section.body}</p>` : ""}
             ${section.items ? `
-              <ul class="overview-list">
+              <ul class="overview-list ${section.heading === "重点方向" ? "tags" : ""}">
                 ${section.items.map((item) => `<li>${item}</li>`).join("")}
               </ul>
             ` : ""}
@@ -1525,7 +1552,7 @@
               ${renderLogo(holding.ticker)}
               <div class="ticker-stack">
                 <span class="ticker-symbol">${getTickerLabel(holding.ticker)}</span>
-                <span class="ticker-company">${holding.company}</span>
+                <span class="ticker-company">${formatCompanyName(holding.company)}</span>
               </div>
             </div>
           </td>
@@ -1559,7 +1586,7 @@
             <div class="mobile-holding-meta">
               <div class="mobile-holding-rank">#${holding.rank ?? ""}</div>
               <div class="mobile-holding-ticker">${getTickerLabel(holding.ticker)}</div>
-              <div class="mobile-holding-company">${holding.company}</div>
+              <div class="mobile-holding-company">${formatCompanyName(holding.company)}</div>
             </div>
           </div>
           <div class="mobile-holding-grid">
